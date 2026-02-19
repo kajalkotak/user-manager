@@ -1,68 +1,117 @@
 // app/api/employees/route.ts
 
-import client from "@/lib/mongodb";
+import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 
-// const employees = [
-//   { name: "kajal", position: "manager" },
-//   { name: "nemish", position: "developer" },
-// ];
+
+// ---------------- GET ----------------
 
 export async function GET() {
-  await client.connect();
+
+  const client = await clientPromise;
 
   const db = client.db("employeeDB");
 
-  const collection = db.collection("employees");
+  const employees = await db
+    .collection("employees")
+    .find()
+    .toArray();
 
-  const employees = await collection.find().toArray();
   return Response.json(employees);
+
 }
+
+
+
+// ---------------- POST ----------------
 
 export async function POST(request: Request) {
-  const newEmployee = await request.json();
 
-  await client.connect();
-  const db = client.db("employeeDB");
-  const collection = db.collection("employees");
-  await collection.insertOne(newEmployee);
-  const employees = await collection.find().toArray();
+  const body = await request.json();
 
-  return Response.json(employees);
-}
-
-export async function DELETE(request: Request) {
-  const { id } = await request.json();
-
-  await client.connect();
+  const client = await clientPromise;
 
   const db = client.db("employeeDB");
 
-  const collection = db.collection("employees");
+  await db.collection("employees").insertOne({
 
-  await collection.deleteOne({ _id: new ObjectId(id) });
+    name: body.name,
 
-  const employees = await collection.find().toArray();
+    position: body.position,
+
+  });
+
+  const employees = await db
+    .collection("employees")
+    .find()
+    .toArray();
 
   return Response.json(employees);
+
 }
+
+
+
+// ---------------- PUT (UPDATE) ----------------
 
 export async function PUT(request: Request) {
-  const { id, name, position } = await request.json();
 
-  await client.connect();
+  const body = await request.json();
+
+  const client = await clientPromise;
 
   const db = client.db("employeeDB");
 
-  const collection = db.collection("employees");
+  await db.collection("employees").updateOne(
 
-  await collection.updateOne(
-    { _id: new ObjectId(id) },
+    { _id: new ObjectId(body.id) },
 
-    { $set: { name, position } },
+    {
+
+      $set: {
+
+        name: body.name,
+
+        position: body.position,
+
+      },
+
+    }
+
   );
 
-  const employees = await collection.find().toArray();
+  const employees = await db
+    .collection("employees")
+    .find()
+    .toArray();
 
   return Response.json(employees);
+
+}
+
+
+
+// ---------------- DELETE ----------------
+
+export async function DELETE(request: Request) {
+
+  const body = await request.json();
+
+  const client = await clientPromise;
+
+  const db = client.db("employeeDB");
+
+  await db.collection("employees").deleteOne({
+
+    _id: new ObjectId(body.id),
+
+  });
+
+  const employees = await db
+    .collection("employees")
+    .find()
+    .toArray();
+
+  return Response.json(employees);
+
 }

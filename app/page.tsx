@@ -20,6 +20,8 @@ export default function Home() {
 
   const [loading, setLoading] = useState(false);
 
+  const [search, setSearch] = useState("");
+
   // ------------useEffect -------------------
 
   useEffect(() => {
@@ -172,42 +174,55 @@ export default function Home() {
         {/* Employee list */}
 
         <div className="max-w-xl mx-auto mt-5 ">
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search Employee...."
+            className="w-full max-w-xl border border-gray-300 rounded-xl p-3 mb-4"
+          />
+
           <h3 className="mt-6 text-3xl font-semibold text-gray-600">
             Employee List
           </h3>
           <ul className="space-y-4 border border-blue-300 p-10 mt-5 list-disc list-inside">
-            {employees.map((emp, index) => (
-              <li
-                key={index}
-                className="flex justify-between text-center items-center"
-              >
-                <span className="text-xl font-semibold text-gray-600">
-                  <strong>{emp.name}</strong> - {emp.position}
-                </span>
+            {employees
+              .filter(
+                (emp) =>
+                  emp.name.toLowerCase().includes(search.toLowerCase()) ||
+                  emp.position.toLowerCase().includes(search.toLowerCase()),
+              )
+              .map((emp, index) => (
+                <li
+                  key={index}
+                  className="flex justify-between text-center items-center"
+                >
+                  <span className="text-xl font-semibold text-gray-600">
+                    <strong>{emp.name}</strong> - {emp.position}
+                  </span>
 
-                <span>
-                  <button
-                    type="button"
-                    onClick={() => handleEditEmployee(emp)}
-                    className="bg-blue-400 text-white rounded-xl ml-4 font-semibold p-2 hover:bg-blue-500 transition-colors"
-                  >
-                    ✏️ Edit
-                  </button>
-                </span>
+                  <span>
+                    <button
+                      type="button"
+                      onClick={() => handleEditEmployee(emp)}
+                      className="bg-blue-400 text-white rounded-xl ml-4 font-semibold p-2 hover:bg-blue-500 transition-colors"
+                    >
+                      ✏️ Edit
+                    </button>
+                  </span>
 
-                <span>
-                  <button
-                    type="button"
-                    disabled={loading}
-                    onClick={() => handleDeleteEmployee(emp._id)}
-                    className="bg-red-400 text-white rounded-xl ml-4 font-semibold p-2 hover:bg-red-500 transition-colors"
-                  >
-                    {loading ? "Deleting..." : "🗑 Delete"}
-
-                  </button>
-                </span>
-              </li>
-            ))}
+                  <span>
+                    <button
+                      type="button"
+                      disabled={loading}
+                      onClick={() => handleDeleteEmployee(emp._id)}
+                      className="bg-red-400 text-white rounded-xl ml-4 font-semibold p-2 hover:bg-red-500 transition-colors"
+                    >
+                      {loading ? "Deleting..." : "🗑 Delete"}
+                    </button>
+                  </span>
+                </li>
+              ))}
           </ul>
         </div>
       </div>
