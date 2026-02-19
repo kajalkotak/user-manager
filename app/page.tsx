@@ -25,16 +25,23 @@ export default function Home() {
   // ------------useEffect -------------------
 
   useEffect(() => {
-    setLoading(true);
+    const fetchEmployees = async () => {
+      setLoading(true);
 
-    fetch(`/api/employees?search=${search}`)
-      .then((res) => res.json())
+      try {
+        const res = await fetch(`/api/employees?search=${search}`);
 
-      .then((data) => {
+        const data = await res.json();
+
         setEmployees(data);
-
+      } catch (error) {
+        console.error(error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    fetchEmployees();
   }, [search]);
 
   //  --------------- add employee -----------------------
