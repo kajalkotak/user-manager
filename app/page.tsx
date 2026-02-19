@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 type Employee = {
   _id: string;
@@ -50,7 +51,8 @@ export default function Home() {
     e.preventDefault();
 
     if (!name || !position) {
-      setError("both field are compulsory");
+      toast.error("Both fields are compulsory");
+
       return;
     }
 
@@ -76,6 +78,7 @@ export default function Home() {
       const updatedEmployees = await res.json();
 
       setEmployees(updatedEmployees);
+      toast.success("Employee Updated Successfully");
 
       setEditId(null);
     } else {
@@ -97,6 +100,8 @@ export default function Home() {
       const updatedEmployees = await res.json();
 
       setEmployees(updatedEmployees);
+
+      toast.success("Employee Added Successfully");
     }
 
     setName("");
@@ -121,6 +126,7 @@ export default function Home() {
     const updatedEmployees = await res.json();
 
     setEmployees(updatedEmployees);
+    toast.success("Employee Deleted Successfully");
   }
 
   //  -----------------edit employee -------------------
